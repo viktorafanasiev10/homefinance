@@ -1,6 +1,7 @@
 import { Category } from '../models/category';
 
 class CategoryController {
+  public type: [string] = ["INCOME", "OUTCOME"]
   public async getAll(req: any, res: any) {
     const userId = req.user.id;
 
@@ -15,6 +16,10 @@ class CategoryController {
   public async create(req: any, res: any) {
     const userId = req.user.id;
     const { name, type } = req.body;
+
+    if (!this.type.includes(type)) {
+      res.status(500).json({ message: 'type can be only "INCOME" or "OUTCOME"' });
+    }
 
     try {
       const category = await Category.create({ userId, name, type });
