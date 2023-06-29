@@ -7,18 +7,18 @@ import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import bcrypt from 'bcryptjs';
 import bodyParser from 'body-parser';
-import { database } from './config/database';
+import { sequelize } from './config/database';
 import { User } from './models';
 import router from './router'
 const app = express();
 const port = 3000;
 
-database
+sequelize
   .authenticate()
   .then(() => {
     console.log('Connection has been established successfully.');
 
-    return database.sync({ force: false });
+    return sequelize.sync({ force: false });
   })
   .catch(err => {
     console.error('Unable to connect to the database:', err);

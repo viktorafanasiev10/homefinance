@@ -1,5 +1,5 @@
 import { Sequelize, Model, DataTypes, BuildOptions } from 'sequelize';
-import { database } from '../config/database';
+import { sequelize } from '../config/database';
 
 class User extends Model {
   public id!: number; // Note that the `null assertion` `!` is required in strict mode.
@@ -32,7 +32,7 @@ User.init(
   },
   {
     tableName: "users",
-    sequelize: database, // this bit is important
+    sequelize, // this bit is important
   }
 );
 

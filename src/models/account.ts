@@ -1,5 +1,5 @@
 import { Model, DataTypes } from 'sequelize';
-import { database } from '../config/database'; // assuming you initialize sequelize instance in database.ts
+import { sequelize } from '../config/database'; // assuming you initialize sequelize instance in database.ts
 
 class Account extends Model {
   public id!: number; // Account ID
@@ -42,7 +42,7 @@ Account.init({
   }
 }, {
   tableName: 'accounts',
-  sequelize: database, // passing the `sequelize` instance is required
+  sequelize, // passing the `sequelize` instance is required
 });
 
 export default Account;
