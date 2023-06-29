@@ -11,7 +11,7 @@ import { sequelize } from './config/database';
 import { User } from './models';
 import router from './router'
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 sequelize
   .authenticate()
