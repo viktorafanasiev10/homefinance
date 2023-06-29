@@ -1,4 +1,4 @@
-import Account from '../models/account';
+import { Account } from '../models/';
 
 class AccountController {
   // Get all accounts for a user

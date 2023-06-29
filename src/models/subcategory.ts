@@ -1,23 +1,27 @@
 import { Model, DataTypes } from 'sequelize';
 import { sequelize } from '../config/database';
 
-class Category extends Model {
-  public id!: number; // Category ID
+class Subcategory extends Model {
+  public id!: number; // Subcategory ID
+  public categoryId!: number; // Category ID
   public userId!: number; // User ID
   public name!: string; // Name
-  public type!: string; // Type
 
   // timestamps!
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
 
-Category.init(
+Subcategory.init(
   {
     id: {
       type: DataTypes.INTEGER.UNSIGNED,
       autoIncrement: true,
       primaryKey: true,
+    },
+    categoryId: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false,
     },
     userId: {
       type: DataTypes.INTEGER.UNSIGNED,
@@ -26,22 +30,12 @@ Category.init(
     name: {
       type: new DataTypes.STRING(128),
       allowNull: false,
-    },
-    type: {
-      type: new DataTypes.STRING(128),
-      allowNull: false,
     }
   },
   {
-    tableName: "categories",
+    tableName: "subcategories",
     sequelize, // this bit is important
   }
 );
-//
-// Category.hasMany(Subcategory, {
-//   sourceKey: 'id',
-//   foreignKey: 'categoryId',
-//   as: 'subcategories' // alias
-// });
 
-export { Category };
+export { Subcategory };

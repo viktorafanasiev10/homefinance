@@ -10,21 +10,20 @@ const passport_local_1 = require("passport-local");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const database_1 = require("./config/database");
-const index_js_1 = require("./models/index.js");
+const models_1 = require("./models");
 const router_1 = __importDefault(require("./router"));
 const app = (0, express_1.default)();
-const port = 3000;
-database_1.database
+const port = process.env.PORT || 3000;
+database_1.sequelize
     .authenticate()
     .then(() => {
     console.log('Connection has been established successfully.');
-    return database_1.database.sync({ force: true });
 })
     .catch(err => {
     console.error('Unable to connect to the database:', err);
 });
 passport_1.default.use(new passport_local_1.Strategy((username, password, done) => {
-    index_js_1.User.findOne({ where: { username: username } })
+    models_1.User.findOne({ where: { username: username } })
         .then(user => {
         if (!user)
             return done(null, false);
@@ -45,7 +44,7 @@ passport_1.default.serializeUser((user, cb) => {
     cb(null, user.id);
 });
 passport_1.default.deserializeUser((id, cb) => {
-    index_js_1.User.findByPk(id)
+    models_1.User.findByPk(id)
         .then(user => cb(null, user))
         .catch(err => cb(err));
 });

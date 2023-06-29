@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.authController = void 0;
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const passport_1 = __importDefault(require("passport"));
 const models_1 = require("../models");
@@ -40,11 +41,17 @@ class AuthController {
             if (!user)
                 res.status(400).send("No User Exists");
             else {
-                req.logIn(user, err => {
-                    if (err)
-                        throw err;
-                    res.status(200).send("Successfully Authenticated");
-                });
+                // req.logIn(user, (err: any) => {
+                //   if (err) throw err;
+                //   res.status(200).send("Successfully Authenticated");
+                // });
+                const payload = {
+                    id: user.id,
+                    username: user.username
+                };
+                const secret = process.env.JWT_SECRET || 'your-secret-key'; // It's better to store secrets in environment variables
+                const token = jsonwebtoken_1.default.sign(payload, secret, { expiresIn: '1h' });
+                res.json({ token });
             }
         })(req, res, next);
     }

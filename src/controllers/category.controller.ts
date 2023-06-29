@@ -1,4 +1,4 @@
-import { Category } from '../models/category';
+import { Category, Subcategory } from '../models/';
 
 const categoryType = ["INCOME", "OUTCOME"]
 class CategoryController {
@@ -7,9 +7,13 @@ class CategoryController {
     const userId = req.user.id;
 
     try {
-      const categories = await Category.findAll({ where: { userId } });
+      const categories = await Category.findAll({
+        where: { userId },
+        include: [{ model: Subcategory, as: 'sub-categories' }] // Include Subcategories
+      });
       res.json(categories);
     } catch (err) {
+      console.log(err);
       res.status(500).json({ message: 'Error while fetching categories' });
     }
   }
@@ -20,6 +24,7 @@ class CategoryController {
 
     if (!categoryType.includes(type)) {
       res.status(500).json({ message: 'type can be only "INCOME" or "OUTCOME"' });
+      return false;
     }
 
     try {

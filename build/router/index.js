@@ -1,7 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
+const auth_middleware_1 = require("../middlewares/auth.middleware");
 const router = (0, express_1.Router)();
 const user_router_1 = require("./user.router");
-router.use('/users', user_router_1.userRouter);
+const auth_router_1 = require("./auth.router");
+const account_router_1 = require("./account.router");
+const category_controller_1 = require("./category.controller");
+const subcategory_router_1 = require("./subcategory.router");
+router.use('/', auth_router_1.authRouter);
+router.use('/users', auth_middleware_1.isAuthenticated, user_router_1.userRouter);
+router.use('/accounts', auth_middleware_1.isAuthenticated, account_router_1.accountRouter);
+router.use('/categories', auth_middleware_1.isAuthenticated, category_controller_1.categoryRouter);
+router.use('/sub-categories', auth_middleware_1.isAuthenticated, subcategory_router_1.subCategoryRouter);
 exports.default = router;

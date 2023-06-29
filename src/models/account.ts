@@ -45,4 +45,4 @@ Account.init({
   sequelize, // passing the `sequelize` instance is required
 });
 
-export default Account;
+export { Account };
