@@ -29,11 +29,11 @@ class AccountController {
   // Update an account
   public async update(req: any, res: any) {
     const userId = req.user.id; // Assuming you have user info in req.user
-    const { accountId } = req.params;
+    const { id } = req.params;
     const { name, initialBalance, currentBalance, currency } = req.body;
 
     try {
-      const account = await Account.findOne({ where: { id: accountId, userId } });
+      const account = await Account.findOne({ where: { id, userId } });
       if (!account) {
         return res.status(404).json({ message: 'Account not found' });
       }

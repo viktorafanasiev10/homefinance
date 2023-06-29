@@ -1,7 +1,7 @@
 {
   "name": "home-finance",
   "version": "1.0.0",
-  "repository": "https://github.com",
+  "repository": "https://git.heroku.com/home-finance.git",
   "description": "BE for home-finance",
   "main": "index.js",
   "scripts": {
