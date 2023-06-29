@@ -1,7 +1,8 @@
 import { Category } from '../models/category';
 
+const categoryType = ["INCOME", "OUTCOME"]
 class CategoryController {
-  public type: [string] = ["INCOME", "OUTCOME"]
+
   public async getAll(req: any, res: any) {
     const userId = req.user.id;
 
@@ -17,7 +18,7 @@ class CategoryController {
     const userId = req.user.id;
     const { name, type } = req.body;
 
-    if (!this.type.includes(type)) {
+    if (!categoryType.includes(type)) {
       res.status(500).json({ message: 'type can be only "INCOME" or "OUTCOME"' });
     }
 
