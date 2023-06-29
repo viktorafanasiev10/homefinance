@@ -1,5 +1,6 @@
 import  { Request } from 'express-serve-static-core';
 import { Response, NextFunction } from 'express';
+import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import passport from 'passport';
 import { User } from '../models';
@@ -24,10 +25,18 @@ class AuthController {
       if (err) throw err;
       if (!user) res.status(400).send("No User Exists");
       else {
-        req.logIn(user, (err: any) => {
-          if (err) throw err;
-          res.status(200).send("Successfully Authenticated");
-        });
+        // req.logIn(user, (err: any) => {
+        //   if (err) throw err;
+        //   res.status(200).send("Successfully Authenticated");
+        // });
+        const payload = {
+          id: user.id,
+          username: user.username
+        };
+        const secret = process.env.JWT_SECRET || 'your-secret-key'; // It's better to store secrets in environment variables
+        const token = jwt.sign(payload, secret, { expiresIn: '1h' });
+
+        res.json({ token });
       }
     })(req, res, next);
   }

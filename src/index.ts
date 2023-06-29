@@ -18,7 +18,7 @@ database
   .then(() => {
     console.log('Connection has been established successfully.');
 
-    return database.sync({ force: true });
+    return database.sync({ force: false });
   })
   .catch(err => {
     console.error('Unable to connect to the database:', err);
