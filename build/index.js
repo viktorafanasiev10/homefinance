@@ -63,13 +63,6 @@ app.use((req, res, next) => {
     next();
 });
 app.use('/api', router_1.default);
-app.use((err, req, res, next) => {
-    // Log the error
-    logger_1.default.error(err.message, { timestamp: new Date().toISOString(), pid: process.pid });
-    // next();
-    // Send error response
-    res.status(500).send('An error occurred, please try again later.');
-});
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
 });

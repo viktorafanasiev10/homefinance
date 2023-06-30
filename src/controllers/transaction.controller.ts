@@ -1,16 +1,25 @@
 import { sequelize } from '../config/database.js';
 import logger from '../config/logger';
 import { Transaction, Account } from '../models';
+import { Op } from 'sequelize';
 
 class TransactionController {
   public async getAll(req: any, res: any) {
     const userId = req.user.id;
-    const accountId = req.params.accountId;
+    const { startDate, endDate } = req.query;
 
     try {
-      const transactions = await Transaction.findAll({ where: { accountId, userId } });
+      const transactions = await Transaction.findAll({
+        where: {
+          userId,
+          date: {
+            [Op.between]: [new Date(startDate), new Date(endDate)]
+          }
+        }
+      });
       res.json(transactions);
-    } catch (err) {
+    } catch (err: any) {
+      logger.child({ error: err?.message }).error('Error while fetching transaction')
       res.status(500).json({ message: 'Error while fetching transactions' });
     }
   }

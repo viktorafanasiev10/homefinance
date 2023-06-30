@@ -3,7 +3,7 @@ import { transactionController } from '../controllers/transaction.controller.js'
 
 const router = Router();
 
-router.get('/:accountId', transactionController.getAll);
+router.get('/', transactionController.getAll);
 router.post('/transfer', transactionController.createTransfer);
 router.post('/income/:accountId', transactionController.createIncome);
 router.post('/:accountId', transactionController.create);

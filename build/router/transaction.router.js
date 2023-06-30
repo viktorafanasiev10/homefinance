@@ -5,7 +5,7 @@ const express_1 = require("express");
 const transaction_controller_js_1 = require("../controllers/transaction.controller.js");
 const router = (0, express_1.Router)();
 exports.transactionRouter = router;
-router.get('/:accountId', transaction_controller_js_1.transactionController.getAll);
+router.get('/', transaction_controller_js_1.transactionController.getAll);
 router.post('/transfer', transaction_controller_js_1.transactionController.createTransfer);
 router.post('/income/:accountId', transaction_controller_js_1.transactionController.createIncome);
 router.post('/:accountId', transaction_controller_js_1.transactionController.create);

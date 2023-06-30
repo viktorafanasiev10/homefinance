@@ -8,20 +8,33 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.transactionController = void 0;
 const database_js_1 = require("../config/database.js");
+const logger_1 = __importDefault(require("../config/logger"));
 const models_1 = require("../models");
+const sequelize_1 = require("sequelize");
 class TransactionController {
     getAll(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const userId = req.user.id;
-            const accountId = req.params.accountId;
+            const { startDate, endDate } = req.query;
             try {
-                const transactions = yield models_1.Transaction.findAll({ where: { accountId, userId } });
+                const transactions = yield models_1.Transaction.findAll({
+                    where: {
+                        userId,
+                        date: {
+                            [sequelize_1.Op.between]: [new Date(startDate), new Date(endDate)]
+                        }
+                    }
+                });
                 res.json(transactions);
             }
             catch (err) {
+                logger_1.default.child({ error: err === null || err === void 0 ? void 0 : err.message }).error('Error while fetching transaction');
                 res.status(500).json({ message: 'Error while fetching transactions' });
             }
         });
@@ -63,6 +76,7 @@ class TransactionController {
             }
             catch (err) {
                 yield transaction.rollback();
+                logger_1.default.child({ error: err === null || err === void 0 ? void 0 : err.message }).error('Error while creating transaction');
                 res.status(500).json({ message: 'Error while creating transaction' });
             }
         });
