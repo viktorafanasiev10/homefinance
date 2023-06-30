@@ -10,6 +10,7 @@ import bodyParser from 'body-parser';
 import { sequelize } from './config/database';
 import { User } from './models';
 import router from './router'
+import logger from './config/logger'
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -57,6 +58,10 @@ app.use(session({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
+app.use((req: any, res: any, next: any) => {
+  logger.child({ body: req.body }).info(`Received ${req.method} request for ${req.url}`);
+  next();
+});
 
 app.use('/api', router);
 

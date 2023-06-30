@@ -1,4 +1,5 @@
 import { sequelize } from '../config/database.js';
+import logger from '../config/logger';
 import { Transaction, Account } from '../models';
 
 class TransactionController {
@@ -55,8 +56,9 @@ class TransactionController {
       await transaction.commit();
 
       res.json(newTransaction);
-    } catch (err) {
+    } catch (err: any) {
       await transaction.rollback();
+      logger.child({ error: err?.message }).error('Error while creating transaction')
       res.status(500).json({ message: 'Error while creating transaction' });
     }
   }

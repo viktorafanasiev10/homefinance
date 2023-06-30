@@ -12,6 +12,7 @@ const body_parser_1 = __importDefault(require("body-parser"));
 const database_1 = require("./config/database");
 const models_1 = require("./models");
 const router_1 = __importDefault(require("./router"));
+const logger_1 = __importDefault(require("./config/logger"));
 const app = (0, express_1.default)();
 const port = process.env.PORT || 3000;
 database_1.sequelize
@@ -57,7 +58,18 @@ app.use((0, express_session_1.default)({
 }));
 app.use(passport_1.default.initialize());
 app.use(passport_1.default.session());
+app.use((req, res, next) => {
+    logger_1.default.child({ body: req.body }).info(`Received ${req.method} request for ${req.url}`);
+    next();
+});
 app.use('/api', router_1.default);
+app.use((err, req, res, next) => {
+    // Log the error
+    logger_1.default.error(err.message, { timestamp: new Date().toISOString(), pid: process.pid });
+    // next();
+    // Send error response
+    res.status(500).send('An error occurred, please try again later.');
+});
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
 });
