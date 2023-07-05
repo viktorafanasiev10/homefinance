@@ -50,6 +50,7 @@ class TransactionController {
   public async createIncome(req: any, res: any) {
     const userId = req.user.id;
     const accountId = req.params.accountId;
+    logger.child({ body: req.body }).info('body')
     const { subcategoryId, amount, date, description, exchangeRate, foreignCurrencyAmount } = req.body;
 
     const transaction = await sequelize.transaction();
@@ -62,6 +63,7 @@ class TransactionController {
       }
 
       account.currentBalance += amount;
+      logger.child({ account }).info({ account });
       await account.save({ transaction });
 
       const newTransaction = await Transaction.create({ accountId, userId, subcategoryId, amount, date, description, exchangeRate, foreignCurrencyAmount, type: 'Income' }, { transaction });
@@ -72,7 +74,10 @@ class TransactionController {
     } catch (err: any) {
       await transaction.rollback();
       logger.child({ error: err?.message }).error('Error while creating transaction')
-      res.status(500).json({ message: 'Error while creating transaction' });
+      res.status(500).json({
+        message: 'Error while creating transaction',
+        error: err?.message
+      });
     }
   }
 
