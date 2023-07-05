@@ -50,7 +50,6 @@ class TransactionController {
   public async createIncome(req: any, res: any) {
     const userId = req.user.id;
     const accountId = req.params.accountId;
-    logger.child({ body: req.body }).info('body')
     const { subcategoryId, amount, date, description, exchangeRate, foreignCurrencyAmount } = req.body;
 
     const transaction = await sequelize.transaction();
@@ -63,10 +62,9 @@ class TransactionController {
       }
 
       account.currentBalance += amount;
-      logger.child({ account }).info({ account });
       await account.save({ transaction });
 
-      const newTransaction = await Transaction.create({ accountId, userId, subcategoryId, amount, date, description, exchangeRate, foreignCurrencyAmount, type: 'Income' }, { transaction });
+      const newTransaction = await Transaction.create({ accountId, userId, subcategoryId, amount, date, description, exchangeRate, foreignCurrencyAmount, type: 'INCOME' }, { transaction });
 
       await transaction.commit();
 
@@ -74,6 +72,54 @@ class TransactionController {
     } catch (err: any) {
       await transaction.rollback();
       logger.child({ error: err?.message }).error('Error while creating transaction')
+      res.status(500).json({
+        message: 'Error while creating transaction',
+        error: err?.message
+      });
+    }
+  }
+
+  public async createExpense(req: any, res: any) {
+    const userId = req.user.id;
+    const accountId = req.params.accountId;
+    const {
+      subcategoryId,
+      amount,
+      date = moment().toISOString(),
+      description,
+      exchangeRate = 1,
+      foreignCurrencyAmount
+    } = req.body;
+
+    const transaction = await sequelize.transaction();
+
+    try {
+      const account = await Account.findOne({ where: { id: accountId, userId } });
+      if (!account) {
+        await transaction.rollback();
+        return res.status(404).json({ message: 'Account not found' });
+      }
+
+      account.currentBalance -= amount;
+      await account.save({ transaction });
+
+      const newTransaction = await Transaction.create({
+        accountId,
+        userId,
+        subcategoryId,
+        amount,
+        date,
+        description,
+        exchangeRate,
+        foreignCurrencyAmount,
+        type: 'OUTCOME'
+      }, { transaction });
+
+      await transaction.commit();
+
+      res.json(newTransaction);
+    } catch (err: any) {
+      await transaction.rollback();
       res.status(500).json({
         message: 'Error while creating transaction',
         error: err?.message
