@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { sequelize } from '../config/database.js';
 import logger from '../config/logger';
 import { Transaction, Account } from '../models';
@@ -6,7 +7,10 @@ import { Op } from 'sequelize';
 class TransactionController {
   public async getAll(req: any, res: any) {
     const userId = req.user.id;
-    const { startDate, endDate } = req.query;
+    const {
+      startDate = moment().subtract(1, 'month').toISOString(),
+      endDate = moment().toISOString()
+    } = req.query;
 
     try {
       const transactions = await Transaction.findAll({
