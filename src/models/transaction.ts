@@ -25,6 +25,10 @@ Transaction.init(
       autoIncrement: true,
       primaryKey: true,
     },
+    userId: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false,
+    },
     accountId: {
       type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
