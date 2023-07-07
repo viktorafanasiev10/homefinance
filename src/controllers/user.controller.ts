@@ -53,12 +53,12 @@ class UserController {
         where: { id: id }
       });
       if (deleted) {
-        res.status(200).send("User deleted");
+        res.status(200).json({ info: "User deleted" });
       } else {
-        res.status(404).send("User not found");
+        res.status(404).json({ error: "User not found" });
       }
     } catch (error: any) {
-      res.status(500).send(error.message);
+      res.status(500).json({ error: error.message });
     }
   }
 }
