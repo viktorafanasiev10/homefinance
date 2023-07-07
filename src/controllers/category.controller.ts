@@ -1,5 +1,5 @@
 import { Category, Subcategory } from '../models/';
-
+import logger from '../config/logger'
 const categoryType = ["INCOME", "OUTCOME"]
 class CategoryController {
 
@@ -13,7 +13,7 @@ class CategoryController {
       });
       res.json(categories);
     } catch (err) {
-      console.log(err);
+      logger.child({ error: err }).error("Fetching categories error");
       res.status(500).json({ message: 'Error while fetching categories' });
     }
   }

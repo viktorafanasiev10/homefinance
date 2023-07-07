@@ -8,7 +8,7 @@ class UserController {
       const users = await User.findAll();
       res.json(users);
     } catch (error: any) {
-      res.status(500).send(error.message);
+      res.status(500).json({ error: error.message });
     }
   }
 
@@ -20,10 +20,10 @@ class UserController {
       if (user) {
         res.json(user);
       } else {
-        res.status(404).send('User with the specified ID does not exists');
+        res.status(404).json({ error: 'User with the specified ID does not exists' });
       }
     } catch (error: any) {
-      res.status(500).send(error.message);
+      res.status(500).json({ error: error.message });
     }
   }
 
@@ -38,10 +38,10 @@ class UserController {
         const updatedUser = await User.findByPk(id);
         res.status(200).json({ user: updatedUser });
       } else {
-        res.status(404).send('User with the specified ID not found');
+        res.status(404).json({ error: 'User with the specified ID not found' });
       }
     } catch (error: any) {
-      res.status(500).send(error.message);
+      res.status(500).json({ error: error.message });
     }
   }
 
