@@ -2,6 +2,7 @@ import express, {
   Request,
   Response
 } from 'express';
+import helmet from "helmet"
 import session from 'express-session';
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
@@ -51,6 +52,7 @@ passport.deserializeUser((id: string, cb: any) => {
 
 app.use(express.json());
 app.use(bodyParser.json());
+app.use(helmet());
 app.use(session({
   secret: 'secret',
   resave: true,
