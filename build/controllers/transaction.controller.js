@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.transactionController = void 0;
+const moment_1 = __importDefault(require("moment"));
 const database_js_1 = require("../config/database.js");
 const logger_1 = __importDefault(require("../config/logger"));
 const models_1 = require("../models");
@@ -21,7 +22,7 @@ class TransactionController {
     getAll(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const userId = req.user.id;
-            const { startDate, endDate } = req.query;
+            const { startDate = (0, moment_1.default)().subtract(1, 'month').toISOString(), endDate = (0, moment_1.default)().toISOString() } = req.query;
             try {
                 const transactions = yield models_1.Transaction.findAll({
                     where: {
@@ -70,14 +71,54 @@ class TransactionController {
                 }
                 account.currentBalance += amount;
                 yield account.save({ transaction });
-                const newTransaction = yield models_1.Transaction.create({ accountId, userId, subcategoryId, amount, date, description, exchangeRate, foreignCurrencyAmount, type: 'Income' }, { transaction });
+                const newTransaction = yield models_1.Transaction.create({ accountId, userId, subcategoryId, amount, date, description, exchangeRate, foreignCurrencyAmount, type: 'INCOME' }, { transaction });
                 yield transaction.commit();
                 res.json(newTransaction);
             }
             catch (err) {
                 yield transaction.rollback();
                 logger_1.default.child({ error: err === null || err === void 0 ? void 0 : err.message }).error('Error while creating transaction');
-                res.status(500).json({ message: 'Error while creating transaction' });
+                res.status(500).json({
+                    message: 'Error while creating transaction',
+                    error: err === null || err === void 0 ? void 0 : err.message
+                });
+            }
+        });
+    }
+    createExpense(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const userId = req.user.id;
+            const accountId = req.params.accountId;
+            const { subcategoryId, amount, date = (0, moment_1.default)().toISOString(), description, exchangeRate = 1, foreignCurrencyAmount } = req.body;
+            const transaction = yield database_js_1.sequelize.transaction();
+            try {
+                const account = yield models_1.Account.findOne({ where: { id: accountId, userId } });
+                if (!account) {
+                    yield transaction.rollback();
+                    return res.status(404).json({ message: 'Account not found' });
+                }
+                account.currentBalance -= amount;
+                yield account.save({ transaction });
+                const newTransaction = yield models_1.Transaction.create({
+                    accountId,
+                    userId,
+                    subcategoryId,
+                    amount,
+                    date,
+                    description,
+                    exchangeRate,
+                    foreignCurrencyAmount,
+                    type: 'OUTCOME'
+                }, { transaction });
+                yield transaction.commit();
+                res.json(newTransaction);
+            }
+            catch (err) {
+                yield transaction.rollback();
+                res.status(500).json({
+                    message: 'Error while creating transaction',
+                    error: err === null || err === void 0 ? void 0 : err.message
+                });
             }
         });
     }

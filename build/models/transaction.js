@@ -12,6 +12,10 @@ Transaction.init({
         autoIncrement: true,
         primaryKey: true,
     },
+    userId: {
+        type: sequelize_1.DataTypes.INTEGER.UNSIGNED,
+        allowNull: false,
+    },
     accountId: {
         type: sequelize_1.DataTypes.INTEGER.UNSIGNED,
         allowNull: false,

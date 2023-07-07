@@ -8,9 +8,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.categoryController = void 0;
 const models_1 = require("../models/");
+const logger_1 = __importDefault(require("../config/logger"));
 const categoryType = ["INCOME", "OUTCOME"];
 class CategoryController {
     getAll(req, res) {
@@ -24,7 +28,7 @@ class CategoryController {
                 res.json(categories);
             }
             catch (err) {
-                console.log(err);
+                logger_1.default.child({ error: err }).error("Fetching categories error");
                 res.status(500).json({ message: 'Error while fetching categories' });
             }
         });
